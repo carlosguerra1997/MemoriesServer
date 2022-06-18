@@ -8,7 +8,7 @@ const PostSchema = mongoose.Schema({
   file: { type: String },
   likes: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now() }
-})
+}, { versionKey: false })
 
 const Post = mongoose.model('Message', PostSchema)
 
