@@ -6,7 +6,7 @@ export const createPost = async (req, res) => {
     await post.save()
     res.status(200).json(post)
   } catch (error) {
-    res.status(404).send(error)
+    res.status(404).json(error)
   }
 }
 
@@ -15,7 +15,7 @@ export const getPosts = async (req, res) => {
     const posts = await Post.find()
     res.status(200).json(posts)
   } catch (error) {
-    res.status(404).send(error)
+    res.status(404).json(error)
   }
 }
 
@@ -26,7 +26,7 @@ export const updatePost = async (req, res) => {
     const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true })
     res.status(200).json(updatedPost)
   } catch (error) {
-    res.status(404).send(error)
+    res.status(404).json(error)
   }
 }
 
@@ -37,7 +37,7 @@ export const likePost = async (req, res) => {
     const updatedPostLikes = await Post.findByIdAndUpdate(id, { likes: post.likes + 1 }, { new: true })
     return res.status(200).json(updatedPostLikes)
   } catch (error) {
-    res.status(404).send(error)
+    res.status(404).json(error)
   }
 }
 
@@ -47,7 +47,7 @@ export const deletePost = async (req, res) => {
     await Post.findByIdAndDelete(id)
     res.status(200).json({ ok: true, message: 'Post borrado con éxito' })
   } catch (error) {
-    res.status(404).send(error)
+    res.status(404).json(error)
   }
 }
 
