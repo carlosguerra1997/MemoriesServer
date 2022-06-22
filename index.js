@@ -2,9 +2,9 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
 
-import connectDB from './config/db.js'
-import postsRouter from './routes/post.js'
-import authRouter from './routes/auth.js'
+import connectDB from './src/config/db.js'
+import postsRouter from './src/routes/post.js'
+import authRouter from './src/routes/auth.js'
 
 dotenv.config()
 
