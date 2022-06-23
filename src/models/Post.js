@@ -6,10 +6,10 @@ const PostSchema = mongoose.Schema({
   creator: { type: String, required: true },
   tags: { type: [String] },
   file: { type: String },
-  likes: { type: Number, default: 0 },
-  createdAt: { type: Date, default: Date.now() }
+  likes: { type: [String], default: [] },
+  createdAt: { type: Date, default: new Date() }
 }, { versionKey: false })
 
-const Post = mongoose.model('Message', PostSchema)
+const Post = mongoose.model('Post', PostSchema)
 
 export default Post
