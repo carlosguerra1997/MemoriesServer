@@ -33,9 +33,15 @@ export const updatePost = async (req, res) => {
 export const likePost = async (req, res) => {
   const { id } = req.params
   try {
+    if (!req.userId) return res.status(400).json({ ok: false, message: 'Inicia sesión para hacer esta acción' })
     const post = await Post.findById(id)
-    const updatedPostLikes = await Post.findByIdAndUpdate(id, { likes: post.likes + 1 }, { new: true })
-    return res.status(200).json(updatedPostLikes)
+    
+    const isLikedByUser = post.likes.filter(idUser => idUser === String(req.userId))
+    if (isLikedByUser) post.likes.filter(idUser => idUser !== String(req.userId))
+    else post.likes.push(req.userId)
+
+    const updatedPostLikes = await Post.findByIdAndUpdate(id, post, { new: true })
+    return res.status(200).json({ ok: true, updatedPostLikes })
   } catch (error) {
     res.status(404).json(error)
   }
