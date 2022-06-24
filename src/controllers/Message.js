@@ -1,21 +1,32 @@
+import mongoose from 'mongoose'
+
 import Post from '../models/Post.js'
+import User from '../models/User.js'
+
 
 export const createPost = async (req, res) => {
-  const post = new Post(req.body)
+  const post = new Post({ ...req.body, creator: mongoose.Types.ObjectId(req.userId) })
   try {
+    const creator = await User.findByUserId(req.userId)
     await post.save()
-    res.status(200).json(post)
+    return res.status(200).json({ post, name: creator.name })
   } catch (error) {
-    res.status(404).json(error)
+    return res.status(404).json(error)
   }
 }
 
 export const getPosts = async (req, res) => {
+  const allPosts = []
   try {
     const posts = await Post.find()
-    res.status(200).json(posts)
+    for (const post of posts) {
+      const creatorName = await User.findByUserId(post.creator)
+      const newPost = { post, creatorName }
+      allPosts.push(newPost)
+    }
+    return res.status(200).json(allPosts)
   } catch (error) {
-    res.status(404).json(error)
+    return res.status(404).json(error)
   }
 }
 
@@ -24,9 +35,9 @@ export const updatePost = async (req, res) => {
   const { post } = req.body
   try {
     const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true })
-    res.status(200).json(updatedPost)
+    return res.status(200).json(updatedPost)
   } catch (error) {
-    res.status(404).json(error)
+    return res.status(404).json(error)
   }
 }
 
@@ -36,14 +47,18 @@ export const likePost = async (req, res) => {
     if (!req.userId) return res.status(400).json({ ok: false, message: 'Inicia sesión para hacer esta acción' })
     const post = await Post.findById(id)
     
-    const isLikedByUser = post.likes.filter(idUser => idUser === String(req.userId))
-    if (isLikedByUser) post.likes.filter(idUser => idUser !== String(req.userId))
-    else post.likes.push(req.userId)
-
+    const isLikedByUser = post.likes.find(idUser => idUser === String(req.userId.id))
+    if (isLikedByUser) {
+      const likes = post.likes.filter(idUser =>  idUser !== isLikedByUser)
+      post.likes = likes
+    }
+    else post.likes.push(req.userId.id)
+      
     const updatedPostLikes = await Post.findByIdAndUpdate(id, post, { new: true })
-    return res.status(200).json({ ok: true, updatedPostLikes })
+    const creatorName = await User.findByUserId(post.creator)
+    return res.status(200).json({ updatedPostLikes, name: creatorName })
   } catch (error) {
-    res.status(404).json(error)
+    return res.status(404).json(error)
   }
 }
 
