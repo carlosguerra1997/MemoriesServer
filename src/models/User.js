@@ -6,6 +6,11 @@ const UserSchema = mongoose.Schema({
   password: { type: String, required: true }
 }, { versionKey: false })
 
+UserSchema.statics.findByUserId = async function(id) {
+  const creator = await this.find({ _id: mongoose.Types.ObjectId(id) })
+  return creator[0].name
+}
+
 const User = mongoose.model('User', UserSchema)
 
 export default User
