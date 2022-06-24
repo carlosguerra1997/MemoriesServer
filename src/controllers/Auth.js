@@ -15,9 +15,10 @@ export const signIn = async (req, res) => {
     if (!isPasswordCorrect) return res.status(400).json({ ok: false, message: auth.invalidCredentials })
     
     const token = jwtSign({ id: userExists._id, email: userExists.email, name: userExists.name })
-    return res.status(200).json({ ok: true, token })
+    const userInfo = { id: userExists.id, name: userExists.name }
+    return res.status(200).json({ userInfo, token })
   } catch (error) {
-    res.status(500).send({ ok: false, message: error })
+    return res.status(500).json({ ok: false, message: error })
   }
 }
 
@@ -31,9 +32,10 @@ export const signUp = async (req, res) => {
     const user = await User.create({ name: `${firstName} ${lastName}`, email, password: hashedPassword })
 
     const token = jwtSign({ id: user._id, email: user.email, name: user.name })
-    return res.status(200).json({ ok: true, token })
+    const userInfo = { id: userExists.id, name: userExists.name }
+    return res.status(200).json({ userInfo, token })
   } catch (error) {
-    res.status(400).send({ ok: false, message: error })
+    return res.status(400).json({ ok: false, message: error })
   }
 }
 

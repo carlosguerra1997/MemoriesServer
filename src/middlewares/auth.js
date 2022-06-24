@@ -9,6 +9,6 @@ export const auth = async (req, res, next) => {
     }
     next()
   } catch (error) {
-    console.log(error)
+    return res.status(401).json({ ok: false, message: 'El token no es válido' })
   }
 }
