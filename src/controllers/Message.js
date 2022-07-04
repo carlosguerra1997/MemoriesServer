@@ -30,6 +30,23 @@ export const getPosts = async (req, res) => {
   }
 }
 
+export const getPostsBySearch = async (req, res) => {
+  const { searchQuery } = req.query
+  const allPosts = []
+  try {
+    const title = new RegExp(searchQuery, 'i')
+    const posts = await Post.find({ title })
+    for (const post of posts) {
+      const creatorName = await User.findByUserId(post.creator)
+      const newPost = { post, creatorName }
+      allPosts.push(newPost)
+    }
+    return res.status(200).json(allPosts)
+  } catch (error) {
+    return res.status(404).json(error)
+  }
+}
+
 export const updatePost = async (req, res) => {
   const { id } = req.params
   const { post } = req.body
