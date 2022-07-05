@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import Post from '../models/Post.js'
 import User from '../models/User.js'
 
+import { LIMIT_POSTS_PER_PAGE } from '../constants/index.js'
 
 export const createPost = async (req, res) => {
   const post = new Post({ ...req.body, creator: mongoose.Types.ObjectId(req.userId) })
@@ -16,15 +17,18 @@ export const createPost = async (req, res) => {
 }
 
 export const getPosts = async (req, res) => {
+  const { page } = req.query
+  const startIndex = (Number(page) -1) * LIMIT_POSTS_PER_PAGE
   const allPosts = []
   try {
-    const posts = await Post.find()
+    const totalDocs = await Post.countDocuments({})
+    const posts = await Post.find().sort({ _id: -1 }).limit(LIMIT_POSTS_PER_PAGE).skip(startIndex)
     for (const post of posts) {
       const creatorName = await User.findByUserId(post.creator)
       const newPost = { post, creatorName }
       allPosts.push(newPost)
     }
-    return res.status(200).json(allPosts)
+    return res.status(200).json({ allPosts, currentPage: Number(page), numberOfPages: Math.ceil(totalDocs / LIMIT_POSTS_PER_PAGE) })
   } catch (error) {
     return res.status(404).json(error)
   }
