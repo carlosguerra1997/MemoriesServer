@@ -3,4 +3,4 @@ export const auth = {
   userExists: 'El usuario ya existe'
 }
 
-export const LIMIT_POSTS_PER_PAGE = 8
+export const LIMIT_POSTS_PER_PAGE = 6

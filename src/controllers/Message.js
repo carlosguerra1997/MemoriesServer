@@ -34,6 +34,24 @@ export const getPosts = async (req, res) => {
   }
 }
 
+export const getRecommendedPosts = async (req, res) => {
+  const { id } = req.params
+  const allPosts = []
+  try {
+    const postFound = await Post.findByPostId(id)
+    const { tags } = postFound[0]
+    const posts = await Post.find({ tags: { $in: tags.join(' ').split(' ') } })
+    for (const post of posts) {
+      const creatorName = await User.findByUserId(post.creator)
+      const newPost = { post, creatorName }
+      allPosts.push(newPost)
+    }
+    return res.status(200).json(allPosts)
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const getPostsBySearch = async (req, res) => {
   const { searchQuery } = req.query
   const allPosts = []
