@@ -10,6 +10,11 @@ const PostSchema = mongoose.Schema({
   createdAt: { type: Date, default: new Date().toISOString() }
 }, { versionKey: false })
 
+PostSchema.statics.findByPostId = async function(id) {
+  const post = await this.find({ _id: mongoose.Types.ObjectId(id) })
+  return post
+}
+
 const Post = mongoose.model('Post', PostSchema)
 
 export default Post
