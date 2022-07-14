@@ -6,7 +6,8 @@ import User from '../models/User.js'
 import { LIMIT_POSTS_PER_PAGE } from '../constants/index.js'
 
 export const createPost = async (req, res) => {
-  const post = new Post({ ...req.body, creator: mongoose.Types.ObjectId(req.userId) })
+  const { tags } = req.body
+  const post = new Post({ ...req.body, tags: tags.split(' '), creator: mongoose.Types.ObjectId(req.userId) })
   try {
     const creator = await User.findByUserId(req.userId)
     await post.save()
@@ -40,7 +41,8 @@ export const getRecommendedPosts = async (req, res) => {
   try {
     const postFound = await Post.findByPostId(id)
     const { tags } = postFound[0]
-    const posts = await Post.find({ tags: { $in: tags.join(' ').split(' ') } })
+    const t = tags.join(' ').split(' ')
+    const posts = await Post.find({ _id: { $ne: id }, tags: { $in: tags.join(' ').split(' ') } })
     for (const post of posts) {
       const creatorName = await User.findByUserId(post.creator)
       const newPost = { post, creatorName }
