@@ -4,7 +4,7 @@ const PostSchema = mongoose.Schema({
   title: { type: String, required: true },
   message: { type: String, required: true },
   creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  tags: { type: [String] },
+  tags: { type: [] },
   file: { type: String },
   likes: { type: [String], default: [] },
   createdAt: { type: Date, default: new Date().toISOString() }
