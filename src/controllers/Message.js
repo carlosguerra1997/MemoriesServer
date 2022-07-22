@@ -17,6 +17,20 @@ export const createPost = async (req, res) => {
   }
 }
 
+export const commentPost = async (req, res) => {
+  const { comment } = req.body
+  const { id } = req.params
+  try {
+    const post = await Post.findByPostId(id)
+    post[0].comments.push(comment)
+    const postUpdated = await Post.findByIdAndUpdate(id, post[0], { new: true })
+    const creatorName = await User.findByUserId(post[0].creator)
+    return res.status(200).json({ postUpdated, name: creatorName })
+  } catch (error) {
+    return res.status(404).json(error)
+  }
+}
+
 export const getPosts = async (req, res) => {
   const { page } = req.query
   const startIndex = (Number(page) -1) * LIMIT_POSTS_PER_PAGE
