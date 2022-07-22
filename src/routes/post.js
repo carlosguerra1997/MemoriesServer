@@ -2,11 +2,12 @@ import express from 'express'
 
 import { auth } from '../middlewares/auth.js'
 
-import { createPost, deletePost, likePost, getPosts, getRecommendedPosts, getPostsBySearch, updatePost } from '../controllers/Message.js'
+import { commentPost, createPost, deletePost, likePost, getPosts, getRecommendedPosts, getPostsBySearch, updatePost } from '../controllers/Message.js'
 
 const router = express.Router()
 
 router.post('/', auth, createPost)
+router.post('/:id/commentPost', auth, commentPost)
 router.get('/', getPosts)
 router.get('/:id', getRecommendedPosts)
 router.get('/search', getPostsBySearch)
